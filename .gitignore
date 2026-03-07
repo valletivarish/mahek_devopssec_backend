@@ -1,0 +1,54 @@
+# ============================================
+# Backend .gitignore - Java/Maven/Spring Boot
+# ============================================
+
+# Compiled class files and build output
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven wrapper (if not needed in repo)
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE-specific files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+*~
+.factorypath
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Log files
+*.log
+logs/
+
+# Environment variables and secrets (never commit credentials)
+.env
+.env.local
+.env.production
+application-local.properties
+application-prod.properties
+
+# Terraform state files (contain sensitive infrastructure data)
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfvars
+terraform/.terraform.lock.hcl
+
+# Coverage and analysis reports (generated during build)
+*.exec
+site/
