@@ -51,7 +51,7 @@ public class RsvpController {
      * @return 200 OK with the RSVP data, or 404 if not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<RsvpResponse> getRsvpById(@PathVariable Long id) {
+    public ResponseEntity<RsvpResponse> getRsvpById(@PathVariable("id") Long id) {
         RsvpResponse rsvp = rsvpService.getRsvpById(id);
         return ResponseEntity.ok(rsvp);
     }
@@ -65,7 +65,7 @@ public class RsvpController {
      * @return 200 OK with a list of RSVP records for the specified event
      */
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<List<RsvpResponse>> getRsvpsByEvent(@PathVariable Long eventId) {
+    public ResponseEntity<List<RsvpResponse>> getRsvpsByEvent(@PathVariable("eventId") Long eventId) {
         List<RsvpResponse> rsvps = rsvpService.getRsvpsByEvent(eventId);
         return ResponseEntity.ok(rsvps);
     }
@@ -79,7 +79,7 @@ public class RsvpController {
      * @return 200 OK with a list of RSVP records for the specified attendee
      */
     @GetMapping("/attendee/{attendeeId}")
-    public ResponseEntity<List<RsvpResponse>> getRsvpsByAttendee(@PathVariable Long attendeeId) {
+    public ResponseEntity<List<RsvpResponse>> getRsvpsByAttendee(@PathVariable("attendeeId") Long attendeeId) {
         List<RsvpResponse> rsvps = rsvpService.getRsvpsByAttendee(attendeeId);
         return ResponseEntity.ok(rsvps);
     }
@@ -109,7 +109,7 @@ public class RsvpController {
      * @return 200 OK with the updated RSVP data, or 404 if not found
      */
     @PutMapping("/{id}")
-    public ResponseEntity<RsvpResponse> updateRsvp(@PathVariable Long id,
+    public ResponseEntity<RsvpResponse> updateRsvp(@PathVariable("id") Long id,
                                                    @Valid @RequestBody RsvpDTO rsvpDTO) {
         RsvpResponse updated = rsvpService.updateRsvp(id, rsvpDTO);
         return ResponseEntity.ok(updated);
@@ -124,7 +124,7 @@ public class RsvpController {
      * @return 204 No Content on successful deletion, or 404 if not found
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRsvp(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRsvp(@PathVariable("id") Long id) {
         rsvpService.deleteRsvp(id);
         return ResponseEntity.noContent().build();
     }

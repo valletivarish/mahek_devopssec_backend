@@ -7,7 +7,7 @@ import com.eventmanager.eventrsvp.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class EventController {
      * @return 200 OK with the event data, or 404 if not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EventResponse> getEventById(@PathVariable Long id) {
+    public ResponseEntity<EventResponse> getEventById(@PathVariable("id") Long id) {
         EventResponse event = eventService.getEventById(id);
         return ResponseEntity.ok(event);
     }
@@ -67,7 +67,7 @@ public class EventController {
      * @return 200 OK with a list of events matching the specified status
      */
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<EventResponse>> getEventsByStatus(@PathVariable EventStatus status) {
+    public ResponseEntity<List<EventResponse>> getEventsByStatus(@PathVariable("status") EventStatus status) {
         List<EventResponse> events = eventService.getEventsByStatus(status);
         return ResponseEntity.ok(events);
     }
@@ -80,7 +80,7 @@ public class EventController {
      * @return 200 OK with a list of events in the specified category
      */
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<EventResponse>> getEventsByCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<List<EventResponse>> getEventsByCategory(@PathVariable("categoryId") Long categoryId) {
         List<EventResponse> events = eventService.getEventsByCategory(categoryId);
         return ResponseEntity.ok(events);
     }
@@ -94,7 +94,7 @@ public class EventController {
      * @return 200 OK with a list of events whose titles match the query
      */
     @GetMapping("/search")
-    public ResponseEntity<List<EventResponse>> searchEvents(@RequestParam String title) {
+    public ResponseEntity<List<EventResponse>> searchEvents(@RequestParam("title") String title) {
         List<EventResponse> events = eventService.searchEvents(title);
         return ResponseEntity.ok(events);
     }
@@ -110,10 +110,7 @@ public class EventController {
      */
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody EventDTO eventDTO) {
-        // Extract the authenticated user's username from the security context
-        // to associate the event with its organiser
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        EventResponse created = eventService.createEvent(eventDTO, username);
+        EventResponse created = eventService.createEvent(eventDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -127,7 +124,7 @@ public class EventController {
      * @return 200 OK with the updated event data, or 404 if not found
      */
     @PutMapping("/{id}")
-    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id,
+    public ResponseEntity<EventResponse> updateEvent(@PathVariable("id") Long id,
                                                      @Valid @RequestBody EventDTO eventDTO) {
         EventResponse updated = eventService.updateEvent(id, eventDTO);
         return ResponseEntity.ok(updated);
@@ -141,7 +138,7 @@ public class EventController {
      * @return 204 No Content on successful deletion, or 404 if not found
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable("id") Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }

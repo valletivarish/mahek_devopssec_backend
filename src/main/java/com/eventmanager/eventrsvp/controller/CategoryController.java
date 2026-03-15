@@ -50,7 +50,7 @@ public class CategoryController {
      * @return 200 OK with the category data, or 404 if not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable("id") Long id) {
         CategoryResponse category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(category);
     }
@@ -77,7 +77,7 @@ public class CategoryController {
      * @return 200 OK with the updated category data, or 404 if not found
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long id,
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("id") Long id,
                                                            @Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryResponse updated = categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.ok(updated);
@@ -91,7 +91,7 @@ public class CategoryController {
      * @return 204 No Content on successful deletion, or 404 if not found
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }

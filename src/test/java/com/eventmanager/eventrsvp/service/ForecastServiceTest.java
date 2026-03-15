@@ -4,7 +4,6 @@ import com.eventmanager.eventrsvp.dto.ForecastResponse;
 import com.eventmanager.eventrsvp.model.*;
 import com.eventmanager.eventrsvp.repository.CheckInRepository;
 import com.eventmanager.eventrsvp.repository.EventRepository;
-import com.eventmanager.eventrsvp.repository.RsvpRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -31,9 +29,6 @@ class ForecastServiceTest {
 
     @Mock
     private EventRepository eventRepository;
-
-    @Mock
-    private RsvpRepository rsvpRepository;
 
     @Mock
     private CheckInRepository checkInRepository;

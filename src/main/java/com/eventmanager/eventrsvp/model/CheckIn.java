@@ -26,12 +26,12 @@ public class CheckIn {
     private Long id;
 
     /** The event where the check-in occurred */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     /** The attendee who checked in */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "attendee_id", nullable = false)
     private Attendee attendee;
 

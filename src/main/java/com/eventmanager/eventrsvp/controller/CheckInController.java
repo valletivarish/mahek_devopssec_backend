@@ -52,7 +52,7 @@ public class CheckInController {
      * @return 200 OK with the check-in data, or 404 if not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CheckInResponse> getCheckInById(@PathVariable Long id) {
+    public ResponseEntity<CheckInResponse> getCheckInById(@PathVariable("id") Long id) {
         CheckInResponse checkIn = checkInService.getCheckInById(id);
         return ResponseEntity.ok(checkIn);
     }
@@ -66,7 +66,7 @@ public class CheckInController {
      * @return 200 OK with a list of check-in records for the specified event
      */
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<List<CheckInResponse>> getCheckInsByEvent(@PathVariable Long eventId) {
+    public ResponseEntity<List<CheckInResponse>> getCheckInsByEvent(@PathVariable("eventId") Long eventId) {
         List<CheckInResponse> checkIns = checkInService.getCheckInsByEvent(eventId);
         return ResponseEntity.ok(checkIns);
     }
@@ -94,7 +94,7 @@ public class CheckInController {
      * @return 204 No Content on successful deletion, or 404 if not found
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCheckIn(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCheckIn(@PathVariable("id") Long id) {
         checkInService.deleteCheckIn(id);
         return ResponseEntity.noContent().build();
     }

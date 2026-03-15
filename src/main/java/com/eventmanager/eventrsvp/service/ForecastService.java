@@ -3,10 +3,8 @@ package com.eventmanager.eventrsvp.service;
 import com.eventmanager.eventrsvp.dto.ForecastResponse;
 import com.eventmanager.eventrsvp.model.Event;
 import com.eventmanager.eventrsvp.model.EventStatus;
-import com.eventmanager.eventrsvp.model.RsvpStatus;
 import com.eventmanager.eventrsvp.repository.CheckInRepository;
 import com.eventmanager.eventrsvp.repository.EventRepository;
-import com.eventmanager.eventrsvp.repository.RsvpRepository;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,9 +47,6 @@ public class ForecastService {
     /** Repository for fetching completed events for historical analysis */
     private final EventRepository eventRepository;
 
-    /** Repository for counting confirmed RSVPs per event */
-    private final RsvpRepository rsvpRepository;
-
     /** Repository for counting actual check-ins (attendance) per event */
     private final CheckInRepository checkInRepository;
 
@@ -59,14 +54,11 @@ public class ForecastService {
      * Constructor injection of all required dependencies.
      *
      * @param eventRepository   repository for event data access
-     * @param rsvpRepository    repository for RSVP count queries
      * @param checkInRepository repository for check-in count queries
      */
     public ForecastService(EventRepository eventRepository,
-                           RsvpRepository rsvpRepository,
                            CheckInRepository checkInRepository) {
         this.eventRepository = eventRepository;
-        this.rsvpRepository = rsvpRepository;
         this.checkInRepository = checkInRepository;
     }
 

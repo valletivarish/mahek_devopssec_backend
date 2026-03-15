@@ -51,7 +51,7 @@ public class AttendeeController {
      * @return 200 OK with the attendee data, or 404 if not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AttendeeResponse> getAttendeeById(@PathVariable Long id) {
+    public ResponseEntity<AttendeeResponse> getAttendeeById(@PathVariable("id") Long id) {
         AttendeeResponse attendee = attendeeService.getAttendeeById(id);
         return ResponseEntity.ok(attendee);
     }
@@ -65,7 +65,7 @@ public class AttendeeController {
      * @return 200 OK with a list of matching attendee records
      */
     @GetMapping("/search")
-    public ResponseEntity<List<AttendeeResponse>> searchAttendees(@RequestParam String query) {
+    public ResponseEntity<List<AttendeeResponse>> searchAttendees(@RequestParam("query") String query) {
         List<AttendeeResponse> results = attendeeService.searchAttendees(query);
         return ResponseEntity.ok(results);
     }
@@ -92,7 +92,7 @@ public class AttendeeController {
      * @return 200 OK with the updated attendee data, or 404 if not found
      */
     @PutMapping("/{id}")
-    public ResponseEntity<AttendeeResponse> updateAttendee(@PathVariable Long id,
+    public ResponseEntity<AttendeeResponse> updateAttendee(@PathVariable("id") Long id,
                                                            @Valid @RequestBody AttendeeDTO attendeeDTO) {
         AttendeeResponse updated = attendeeService.updateAttendee(id, attendeeDTO);
         return ResponseEntity.ok(updated);
@@ -106,7 +106,7 @@ public class AttendeeController {
      * @return 204 No Content on successful deletion, or 404 if not found
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAttendee(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAttendee(@PathVariable("id") Long id) {
         attendeeService.deleteAttendee(id);
         return ResponseEntity.noContent().build();
     }

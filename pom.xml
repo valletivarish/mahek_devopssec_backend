@@ -127,6 +127,15 @@
 
     <build>
         <plugins>
+            <!-- Maven Compiler plugin with -parameters flag for Spring parameter name resolution -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+
             <!-- Spring Boot Maven plugin for packaging executable JAR -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>

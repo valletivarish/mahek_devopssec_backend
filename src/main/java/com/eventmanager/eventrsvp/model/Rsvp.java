@@ -25,12 +25,12 @@ public class Rsvp {
     private Long id;
 
     /** The event this RSVP is for */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     /** The attendee who submitted this RSVP */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "attendee_id", nullable = false)
     private Attendee attendee;
 
