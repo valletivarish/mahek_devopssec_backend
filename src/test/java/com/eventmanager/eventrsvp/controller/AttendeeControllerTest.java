@@ -33,6 +33,7 @@ class AttendeeControllerTest {
     private ObjectMapper objectMapper;
 
     private static String jwtToken;
+    private static String createdAttendeeId;
 
     /**
      * Registers a test user and obtains a JWT token for authenticated test requests.
@@ -68,13 +69,17 @@ class AttendeeControllerTest {
         dto.setPhone("+353851234567");
         dto.setOrganization("Acme Corp");
 
-        mockMvc.perform(post("/api/attendees")
+        MvcResult result = mockMvc.perform(post("/api/attendees")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
+                .andReturn();
+
+        createdAttendeeId = objectMapper.readTree(result.getResponse().getContentAsString())
+                .get("id").asText();
     }
 
     /**
@@ -128,6 +133,7 @@ class AttendeeControllerTest {
 
     /**
      * Tests updating an attendee with valid data returns 200 OK.
+     * Uses the attendee created in Order(1) to avoid conflicts with seeded data.
      */
     @Test
     @Order(5)
@@ -139,7 +145,7 @@ class AttendeeControllerTest {
         dto.setPhone("+353859999999");
         dto.setOrganization("Updated Corp");
 
-        mockMvc.perform(put("/api/attendees/1")
+        mockMvc.perform(put("/api/attendees/" + createdAttendeeId)
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))

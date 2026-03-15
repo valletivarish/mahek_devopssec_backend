@@ -109,7 +109,7 @@ class EventControllerTest {
         mockMvc.perform(get("/api/events"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].title").value("Tech Conference 2025"));
+                .andExpect(jsonPath("$[0].title").value("Tech Innovation Summit 2026"));
     }
 
     /**

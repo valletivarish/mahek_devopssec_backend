@@ -62,8 +62,8 @@ class CategoryControllerTest {
     @Order(1)
     void createCategoryShouldReturn201() throws Exception {
         CategoryDTO dto = new CategoryDTO();
-        dto.setName("Conference");
-        dto.setDescription("Professional conferences and summits");
+        dto.setName("Hackathon");
+        dto.setDescription("Competitive coding and innovation events");
         dto.setColorCode("#3B82F6");
 
         mockMvc.perform(post("/api/categories")
@@ -71,7 +71,7 @@ class CategoryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Conference"))
+                .andExpect(jsonPath("$.name").value("Hackathon"))
                 .andExpect(jsonPath("$.colorCode").value("#3B82F6"));
     }
 
@@ -165,13 +165,18 @@ class CategoryControllerTest {
         dto.setDescription("Will be deleted");
         dto.setColorCode("#FF0000");
 
-        mockMvc.perform(post("/api/categories")
+        MvcResult createResult = mockMvc.perform(post("/api/categories")
                         .header("Authorization", "Bearer " + jwtToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn();
 
-        mockMvc.perform(delete("/api/categories/2")
+        // Extract the ID of the newly created category and delete it
+        String createdId = objectMapper.readTree(createResult.getResponse().getContentAsString())
+                .get("id").asText();
+
+        mockMvc.perform(delete("/api/categories/" + createdId)
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNoContent());
     }
