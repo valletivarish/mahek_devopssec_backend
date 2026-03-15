@@ -69,6 +69,19 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void handleAuthenticationExceptionShouldReturn401() {
+        org.springframework.security.core.AuthenticationException ex =
+                new org.springframework.security.authentication.BadCredentialsException("Bad credentials");
+
+        ResponseEntity<Map<String, Object>> response = handler.handleAuthenticationException(ex);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(401, response.getBody().get("status"));
+        assertEquals("Bad credentials", response.getBody().get("message"));
+    }
+
+    @Test
     void handleGenericExceptionShouldReturn500() {
         Exception ex = new RuntimeException("Unexpected error");
 

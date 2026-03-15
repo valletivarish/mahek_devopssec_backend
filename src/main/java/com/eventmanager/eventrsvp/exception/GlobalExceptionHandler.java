@@ -2,6 +2,7 @@ package com.eventmanager.eventrsvp.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,6 +68,20 @@ public class GlobalExceptionHandler {
         response.put("error", "Bad Request");
         response.put("message", ex.getMessage());
         return ResponseEntity.badRequest().body(response);
+    }
+
+    /**
+     * Handles authentication failures (bad credentials, user not found), returning a 401 response.
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthenticationException(
+            AuthenticationException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now().toString());
+        response.put("status", HttpStatus.UNAUTHORIZED.value());
+        response.put("error", "Unauthorized");
+        response.put("message", "Bad credentials");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     /**
