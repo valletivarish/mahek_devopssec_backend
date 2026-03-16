@@ -70,7 +70,23 @@ public class DataSeeder implements CommandLineRunner {
                 .role(UserRole.USER)
                 .build());
 
-        // --- Attendees linked to users (non-admin users get attendee records) ---
+        User demo = userRepository.save(User.builder()
+                .username("demo")
+                .email("demo@eventrsvp.com")
+                .password(passwordEncoder.encode("demo123"))
+                .fullName("Demo User")
+                .role(UserRole.USER)
+                .build());
+
+        User mike = userRepository.save(User.builder()
+                .username("mike")
+                .email("mike@eventrsvp.com")
+                .password(passwordEncoder.encode("mike123"))
+                .fullName("Mike Wilson")
+                .role(UserRole.USER)
+                .build());
+
+        // --- Attendees linked to non-admin users ---
         Attendee johnAttendee = attendeeRepository.save(Attendee.builder()
                 .firstName("John").lastName("Smith").email("john@eventrsvp.com")
                 .phone("+353-85-1234567").user(john).build());
@@ -78,6 +94,14 @@ public class DataSeeder implements CommandLineRunner {
         Attendee sarahAttendee = attendeeRepository.save(Attendee.builder()
                 .firstName("Sarah").lastName("Johnson").email("sarah@eventrsvp.com")
                 .phone("+353-86-2345678").user(sarah).build());
+
+        attendeeRepository.save(Attendee.builder()
+                .firstName("Demo").lastName("User").email("demo@eventrsvp.com")
+                .user(demo).build());
+
+        attendeeRepository.save(Attendee.builder()
+                .firstName("Mike").lastName("Wilson").email("mike@eventrsvp.com")
+                .user(mike).build());
 
         // --- Categories ---
         Category conference = categoryRepository.save(Category.builder()
@@ -138,26 +162,21 @@ public class DataSeeder implements CommandLineRunner {
                 .category(seminar)
                 .build());
 
-        // --- RSVPs ---
+        // --- RSVPs (john has some, sarah has one, demo and mike have none for demo) ---
         rsvpRepository.save(Rsvp.builder().event(techConf).attendee(johnAttendee).status(RsvpStatus.CONFIRMED)
                 .dietaryPreferences("None").build());
-        rsvpRepository.save(Rsvp.builder().event(techConf).attendee(sarahAttendee).status(RsvpStatus.MAYBE).build());
-
-        rsvpRepository.save(Rsvp.builder().event(reactWorkshop).attendee(johnAttendee).status(RsvpStatus.CONFIRMED).build());
-
         rsvpRepository.save(Rsvp.builder().event(pastEvent).attendee(johnAttendee).status(RsvpStatus.CONFIRMED).build());
         rsvpRepository.save(Rsvp.builder().event(pastEvent).attendee(sarahAttendee).status(RsvpStatus.CONFIRMED).build());
 
         // --- Check-ins (completed event only) ---
         checkInRepository.save(CheckIn.builder().event(pastEvent).attendee(johnAttendee).checkInMethod(CheckInMethod.QR_CODE).build());
-        checkInRepository.save(CheckIn.builder().event(pastEvent).attendee(sarahAttendee).checkInMethod(CheckInMethod.MANUAL).build());
 
         System.out.println("Database seeded successfully!");
-        System.out.println("  - 3 Users (admin/admin123, john/john123, sarah/sarah123)");
-        System.out.println("  - 2 Attendees (linked to john and sarah)");
+        System.out.println("  - 5 Users (admin/admin123, john/john123, sarah/sarah123, demo/demo123, mike/mike123)");
+        System.out.println("  - 4 Attendees (linked to john, sarah, demo, mike)");
         System.out.println("  - 3 Categories");
         System.out.println("  - 3 Events (2 upcoming, 1 completed)");
-        System.out.println("  - 5 RSVPs");
-        System.out.println("  - 2 Check-ins");
+        System.out.println("  - 3 RSVPs");
+        System.out.println("  - 1 Check-in");
     }
 }
