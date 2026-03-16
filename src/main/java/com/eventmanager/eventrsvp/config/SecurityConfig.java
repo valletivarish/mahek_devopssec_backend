@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**",
                         "/swagger-ui.html").permitAll()
                 // Allow health check endpoint for CI/CD smoke tests
-                .requestMatchers("/api/health").permitAll()
+                .requestMatchers("/api/health", "/api/info").permitAll()
                 // Allow GET requests for read-only access to resources
                 .requestMatchers(HttpMethod.GET, "/api/events/**",
                         "/api/categories/**", "/api/attendees/**",

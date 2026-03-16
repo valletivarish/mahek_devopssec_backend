@@ -19,4 +19,15 @@ public class HealthController {
     public ResponseEntity<Map<String, String>> healthCheck() {
         return ResponseEntity.ok(Map.of("status", "UP", "application", "Event RSVP Manager"));
     }
+
+    /** Returns application version and environment info for deployment verification */
+    @GetMapping("/info")
+    public ResponseEntity<Map<String, String>> appInfo() {
+        return ResponseEntity.ok(Map.of(
+                "application", "Event RSVP and Attendance Manager",
+                "version", "1.0.0",
+                "environment", System.getProperty("spring.profiles.active", "default"),
+                "java", System.getProperty("java.version")
+        ));
+    }
 }
