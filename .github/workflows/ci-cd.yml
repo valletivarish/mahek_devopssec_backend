@@ -19,7 +19,7 @@ jobs:
   # Runs on every push and pull request
   # ============================================
   ci:
-    name: Build, Test & Analyse
+    name: CI - Build, Test & Analyse
     runs-on: ubuntu-latest
 
     steps:
@@ -105,7 +105,7 @@ jobs:
   # Only runs on push to main branch (not on PRs)
   # ============================================
   cd:
-    name: Deploy to AWS EC2
+    name: CD - Deploy to AWS EC2
     needs: ci
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
