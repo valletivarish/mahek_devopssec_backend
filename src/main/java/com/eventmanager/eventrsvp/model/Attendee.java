@@ -34,6 +34,11 @@ public class Attendee {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    /** Linked user account (null for externally added attendees) */
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
+
     /** Contact phone number in international format */
     @Column(length = 20)
     private String phone;

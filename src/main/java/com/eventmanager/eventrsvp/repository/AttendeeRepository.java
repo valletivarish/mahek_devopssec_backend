@@ -22,4 +22,7 @@ public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
     /** Search attendees by first or last name (case-insensitive) for autocomplete */
     List<Attendee> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
             String firstName, String lastName);
+
+    /** Find the attendee linked to a specific user */
+    Optional<Attendee> findByUserId(Long userId);
 }

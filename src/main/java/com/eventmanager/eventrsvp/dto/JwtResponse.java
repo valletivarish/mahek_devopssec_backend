@@ -30,4 +30,7 @@ public class JwtResponse {
 
     /** Authenticated user's role (ADMIN or USER) */
     private String role;
+
+    /** Linked attendee ID (null for ADMIN users) */
+    private Long attendeeId;
 }

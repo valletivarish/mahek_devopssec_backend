@@ -5,8 +5,10 @@ import com.eventmanager.eventrsvp.dto.JwtResponse;
 import com.eventmanager.eventrsvp.dto.LoginRequest;
 import com.eventmanager.eventrsvp.dto.RegisterRequest;
 import com.eventmanager.eventrsvp.exception.BadRequestException;
+import com.eventmanager.eventrsvp.model.Attendee;
 import com.eventmanager.eventrsvp.model.User;
 import com.eventmanager.eventrsvp.model.UserRole;
+import com.eventmanager.eventrsvp.repository.AttendeeRepository;
 import com.eventmanager.eventrsvp.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,23 +46,19 @@ public class AuthService {
     /** Utility for generating and validating JWT tokens */
     private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * Constructor injection of all required dependencies.
-     * Spring automatically wires these beans from the application context.
-     *
-     * @param userRepository        repository for user CRUD operations
-     * @param passwordEncoder       encoder for hashing passwords with BCrypt
-     * @param authenticationManager manager for authenticating login attempts
-     * @param jwtTokenProvider      provider for JWT token generation
-     */
+    /** Repository for creating attendee records linked to users */
+    private final AttendeeRepository attendeeRepository;
+
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
-                       JwtTokenProvider jwtTokenProvider) {
+                       JwtTokenProvider jwtTokenProvider,
+                       AttendeeRepository attendeeRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.attendeeRepository = attendeeRepository;
     }
 
     /**
@@ -109,12 +107,19 @@ public class AuthService {
         // Persist the new user to the database
         User savedUser = userRepository.save(user);
 
-        // Generate a JWT token for the newly registered user so they can
-        // immediately access protected API endpoints without a separate login step
+        // Auto-create a linked attendee record for non-admin users
+        String[] nameParts = savedUser.getFullName().split(" ", 2);
+        String firstName = nameParts[0];
+        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+        Attendee attendee = attendeeRepository.save(Attendee.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(savedUser.getEmail())
+                .user(savedUser)
+                .build());
+
         String token = jwtTokenProvider.generateToken(savedUser.getUsername());
 
-        // Build and return the response containing the token and user profile information.
-        // The frontend stores this response to maintain the authenticated session.
         return JwtResponse.builder()
                 .token(token)
                 .type("Bearer")
@@ -122,6 +127,7 @@ public class AuthService {
                 .username(savedUser.getUsername())
                 .email(savedUser.getEmail())
                 .role(savedUser.getRole().name())
+                .attendeeId(attendee.getId())
                 .build();
     }
 
@@ -168,7 +174,11 @@ public class AuthService {
         // Generate a JWT token for the authenticated user
         String token = jwtTokenProvider.generateToken(user.getUsername());
 
-        // Build and return the JWT response with token and user information
+        // Look up linked attendee ID for the user
+        Long attendeeId = attendeeRepository.findByUserId(user.getId())
+                .map(Attendee::getId)
+                .orElse(null);
+
         return JwtResponse.builder()
                 .token(token)
                 .type("Bearer")
@@ -176,6 +186,7 @@ public class AuthService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole().name())
+                .attendeeId(attendeeId)
                 .build();
     }
 }

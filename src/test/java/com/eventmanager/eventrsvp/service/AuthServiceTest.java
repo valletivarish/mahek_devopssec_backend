@@ -5,8 +5,10 @@ import com.eventmanager.eventrsvp.dto.JwtResponse;
 import com.eventmanager.eventrsvp.dto.LoginRequest;
 import com.eventmanager.eventrsvp.dto.RegisterRequest;
 import com.eventmanager.eventrsvp.exception.BadRequestException;
+import com.eventmanager.eventrsvp.model.Attendee;
 import com.eventmanager.eventrsvp.model.User;
 import com.eventmanager.eventrsvp.model.UserRole;
+import com.eventmanager.eventrsvp.repository.AttendeeRepository;
 import com.eventmanager.eventrsvp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,8 @@ class AuthServiceTest {
     private AuthenticationManager authenticationManager;
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+    @Mock
+    private AttendeeRepository attendeeRepository;
 
     @InjectMocks
     private AuthService authService;
@@ -62,6 +66,8 @@ class AuthServiceTest {
         when(userRepository.existsByEmail("new@example.com")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
+        Attendee attendee = Attendee.builder().id(1L).firstName("Test").lastName("User").email("test@example.com").build();
+        when(attendeeRepository.save(any(Attendee.class))).thenReturn(attendee);
         when(jwtTokenProvider.generateToken("testuser")).thenReturn("jwt-token");
 
         JwtResponse result = authService.register(request);
@@ -106,6 +112,8 @@ class AuthServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+        when(attendeeRepository.findByUserId(1L)).thenReturn(Optional.of(
+                Attendee.builder().id(1L).firstName("Test").lastName("User").build()));
         when(jwtTokenProvider.generateToken("testuser")).thenReturn("jwt-token");
 
         JwtResponse result = authService.login(request);
