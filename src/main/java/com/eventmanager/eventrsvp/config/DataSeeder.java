@@ -95,13 +95,13 @@ public class DataSeeder implements CommandLineRunner {
                 .firstName("Sarah").lastName("Johnson").email("sarah@eventrsvp.com")
                 .phone("+353-86-2345678").user(sarah).build());
 
-        attendeeRepository.save(Attendee.builder()
+        Attendee demoAttendee = attendeeRepository.save(Attendee.builder()
                 .firstName("Demo").lastName("User").email("demo@eventrsvp.com")
-                .user(demo).build());
+                .phone("+353-87-3456789").user(demo).build());
 
-        attendeeRepository.save(Attendee.builder()
+        Attendee mikeAttendee = attendeeRepository.save(Attendee.builder()
                 .firstName("Mike").lastName("Wilson").email("mike@eventrsvp.com")
-                .user(mike).build());
+                .phone("+353-89-4567890").user(mike).build());
 
         // --- Categories ---
         Category conference = categoryRepository.save(Category.builder()
@@ -162,21 +162,29 @@ public class DataSeeder implements CommandLineRunner {
                 .category(seminar)
                 .build());
 
-        // --- RSVPs (john has some, sarah has one, demo and mike have none for demo) ---
-        rsvpRepository.save(Rsvp.builder().event(techConf).attendee(johnAttendee).status(RsvpStatus.CONFIRMED)
-                .dietaryPreferences("None").build());
-        rsvpRepository.save(Rsvp.builder().event(pastEvent).attendee(johnAttendee).status(RsvpStatus.CONFIRMED).build());
-        rsvpRepository.save(Rsvp.builder().event(pastEvent).attendee(sarahAttendee).status(RsvpStatus.CONFIRMED).build());
+        // --- RSVPs ---
+        // john and sarah: minimal data (they are demo login buttons — used for live demo)
+        rsvpRepository.save(Rsvp.builder().event(techConf).attendee(johnAttendee).status(RsvpStatus.CONFIRMED).build());
 
-        // --- Check-ins (completed event only) ---
-        checkInRepository.save(CheckIn.builder().event(pastEvent).attendee(johnAttendee).checkInMethod(CheckInMethod.QR_CODE).build());
+        // demo and mike: more data to show populated lists
+        rsvpRepository.save(Rsvp.builder().event(techConf).attendee(demoAttendee).status(RsvpStatus.CONFIRMED)
+                .dietaryPreferences("Vegetarian").build());
+        rsvpRepository.save(Rsvp.builder().event(reactWorkshop).attendee(demoAttendee).status(RsvpStatus.CONFIRMED).build());
+        rsvpRepository.save(Rsvp.builder().event(pastEvent).attendee(demoAttendee).status(RsvpStatus.CONFIRMED).build());
+        rsvpRepository.save(Rsvp.builder().event(techConf).attendee(mikeAttendee).status(RsvpStatus.CONFIRMED)
+                .dietaryPreferences("None").build());
+        rsvpRepository.save(Rsvp.builder().event(pastEvent).attendee(mikeAttendee).status(RsvpStatus.CONFIRMED).build());
+
+        // --- Check-ins (completed event) ---
+        checkInRepository.save(CheckIn.builder().event(pastEvent).attendee(demoAttendee).checkInMethod(CheckInMethod.QR_CODE).build());
+        checkInRepository.save(CheckIn.builder().event(pastEvent).attendee(mikeAttendee).checkInMethod(CheckInMethod.MANUAL).build());
 
         System.out.println("Database seeded successfully!");
         System.out.println("  - 5 Users (admin/admin123, john/john123, sarah/sarah123, demo/demo123, mike/mike123)");
         System.out.println("  - 4 Attendees (linked to john, sarah, demo, mike)");
         System.out.println("  - 3 Categories");
         System.out.println("  - 3 Events (2 upcoming, 1 completed)");
-        System.out.println("  - 3 RSVPs");
-        System.out.println("  - 1 Check-in");
+        System.out.println("  - 6 RSVPs (john: 1, demo: 3, mike: 2)");
+        System.out.println("  - 2 Check-ins (demo + mike on past event)");
     }
 }
