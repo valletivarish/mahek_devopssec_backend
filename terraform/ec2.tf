@@ -199,3 +199,27 @@ resource "aws_instance" "event_rsvp_backend" {
   # so the user data script can access the internet to download packages
   depends_on = [aws_internet_gateway.event_rsvp_igw]
 }
+
+# -----------------------------------------------------------------------------
+# Elastic IP for EC2 Instance
+# -----------------------------------------------------------------------------
+# An Elastic IP provides a static public IPv4 address that persists across
+# instance stop/start cycles. This ensures the backend API always has the
+# same IP address, which is critical for:
+#   - CI/CD pipelines that deploy via SSH to a known host
+#   - Frontend configuration pointing to the backend API
+#   - DNS records (if configured)
+# Without an EIP, the public IP changes every time the instance restarts.
+# -----------------------------------------------------------------------------
+resource "aws_eip" "event_rsvp_eip" {
+  instance = aws_instance.event_rsvp_backend.id
+  domain   = "vpc"
+
+  tags = {
+    Name        = "event-rsvp-eip"
+    Environment = var.environment
+    Project     = "EventRSVPAndAttendanceManager"
+  }
+
+  depends_on = [aws_internet_gateway.event_rsvp_igw]
+}

@@ -45,7 +45,6 @@ jobs:
         run: mvn verify -B -DskipTests
 
       # Step 5: Run Trivy filesystem scan for dependency vulnerabilities
-      # This replaces OWASP Dependency-Check for better CI compatibility
       - name: Security Vulnerability Scan (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
@@ -119,23 +118,7 @@ jobs:
           name: application-jar
           path: deploy/
 
-      # Step 2: Deploy the JAR to EC2 instance via SSH
-      # Uses appleboy/ssh-action to connect and restart the application
-      - name: Deploy to EC2 via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # Stop existing application if running
-            sudo systemctl stop event-rsvp-backend || true
-            # Copy new JAR to application directory
-            mkdir -p /home/ec2-user/app
-            # Start the application with production profile
-            sudo systemctl start event-rsvp-backend
-
-      # Step 3: Upload JAR to EC2 via SCP
+      # Step 2: Copy JAR to EC2 via SCP (must happen BEFORE restarting the service)
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -143,12 +126,32 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "deploy/*.jar"
-          target: "/home/ec2-user/app/"
+          target: "/home/ec2-user/"
           strip_components: 1
+
+      # Step 3: Deploy the JAR and restart the application service via SSH
+      - name: Deploy and Restart Application
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Stop existing application if running
+            sudo systemctl stop event-rsvp.service || true
+            # Copy new JAR to application directory
+            sudo cp /home/ec2-user/*.jar /opt/event-rsvp/event-rsvp-backend.jar
+            sudo chown eventrsvp:eventrsvp /opt/event-rsvp/event-rsvp-backend.jar
+            # Start the application with production profile
+            sudo systemctl start event-rsvp.service
+            # Wait for startup
+            sleep 15
+            # Verify the service is running
+            sudo systemctl is-active event-rsvp.service
 
       # Step 4: Smoke test - verify the application is running
       - name: Smoke Test - Health Check
         run: |
-          echo "Waiting for application to start..."
-          sleep 30
+          echo "Waiting for application to fully start..."
+          sleep 15
           curl -f http://${{ secrets.EC2_HOST }}:8080/api/health || echo "Health check pending - server may still be starting"

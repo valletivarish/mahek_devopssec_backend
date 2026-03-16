@@ -21,6 +21,11 @@ output "ec2_public_ip" {
   value       = aws_instance.event_rsvp_backend.public_ip
 }
 
+output "elastic_ip" {
+  description = "Static Elastic IP address for the EC2 backend instance"
+  value       = aws_eip.event_rsvp_eip.public_ip
+}
+
 # -----------------------------------------------------------------------------
 # EC2 Instance Public DNS
 # -----------------------------------------------------------------------------
