@@ -44,7 +44,7 @@ resource "aws_s3_bucket_website_configuration" "frontend_website" {
   # Error page - served for 404 and other error responses
   # Using index.html supports client-side routing in SPAs
   error_document {
-    key = "error.html"
+    key = "index.html"
   }
 }
 
