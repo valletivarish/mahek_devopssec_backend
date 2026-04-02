@@ -17,7 +17,7 @@ public class HealthController {
     /** Returns a 200 OK response with status UP when the application is healthy */
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> healthCheck() {
-        return ResponseEntity.ok(Map.of("status", "UP", "application", "Event RSVP Manager"));
+        return ResponseEntity.ok(Map.of("status", "UP", "application", "Event RSVP Manager", "version", "1.0.0"));
     }
 
     /** Returns application version and environment info for deployment verification */
